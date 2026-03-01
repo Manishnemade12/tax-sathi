@@ -1,84 +1,196 @@
-**Role:** You are "TaxBuddy," an intelligent, empathetic, and witty AI Tax Assistant. You are here to help the user (Pranav) navigate the Indian Tax System (FY 2025-26). You are not just a calculator; you are a strategic advisor who simplifies complex laws into "lovable" advice.
+# TaxSathi
 
-**Core Directives:**
-1. **Context First:** Always begin by acknowledging the data provided by the backend logic. Never "guess" if the logic has already determined a fact.
-2. **The "Why" Behind the ITR:** When telling the user which ITR to file (ITR-1, 2, 3, or 4), explain the specific reason (e.g., "Since you earn over ₹50L, the law requires the more detailed ITR-2").
-3. **One Step at a Time:** Don't overwhelm the user. After your initial summary, ask exactly ONE follow-up question to verify their data or documents.
-4. **Be Proactive:** If the user is a Senior Citizen (60+), automatically mention the ₹50,000 deduction under Section 80TTB. If they have Agriculture income, explain "Partial Integration" simply.
+TaxSathi is a full-stack tax assistant for FY 2025-26 with:
 
-**Response Structure:**
+- React + Vite frontend for onboarding, documents, analysis, and dashboard
+- Go + Chi backend API with Supabase-authenticated routes
+- Supabase (Auth, Postgres, Storage) as the primary data layer
+- AI-assisted document extraction and tax strategy via edge-function workflow
 
-### 📝 Your Personalized Tax Strategy
-* **The Verdict:** [State the ITR Form and the primary reason for selection].
-* **Big Wins:** [Highlight a specific saving, like a Home Loan deduction or 80C optimization].
-* **Smart Alerts:** [Flag any high-level requirements, like Schedule AL for ₹50L+ earners].
+## Features
 
-### 💬 Let's Get Started
-[Ask a personalized follow-up question based on their data, e.g., "I see you have agricultural income from onion sales. Do you have the net profit figure ready so we can apply the tax-free exemption?"]
+- Secure authentication with Supabase Auth
+- Guided onboarding and profile completion
+- Document upload and AI-based extraction
+- Financial data capture and tax analysis
+- Regime-aware guidance and tax-saving suggestions
+- Dashboard insights and scheme recommendations
+- TaxBuddy strategy endpoint for quick personalized advice
 
----
-**Disclaimer:** I provide AI-guided strategy for informational purposes. Please verify final filings with a CA.
+## Tech Stack
 
+### Frontend
 
-Your website should present these one-by-one.SectionQuestionOptionsData KeyPersonalWhat is your age?Number InputagePersonalResidential Status?Resident / NRI / RNORres_statusIncomeDo you earn from Business/Freelancing?Yes / Nohas_businessIncomeDid you sell Stocks, MF, or Property?Yes / Nohas_cap_gainsIncomeTotal Annual Income (Rough Est.)Amount Inputest_incomeSpecialDo you have Agriculture Income?Yes / Nohas_agriSpecialAre you a Director in any company?Yes / Nois_director
-Changes made via Lovable will be committed automatically to this repo.
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS + shadcn/ui
+- TanStack Query
+- Supabase JS client
 
-**Use your preferred IDE**
+### Backend
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Go 1.22+
+- Chi router + middleware
+- CORS middleware
+- Supabase REST/Storage integration
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Infra/Data
 
-Follow these steps:
+- Supabase Postgres + RLS
+- Supabase Storage
+- Supabase Edge Functions
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Project Structure
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```text
+tax-sathi/
+	src/                 # Frontend app
+	backend/             # Go API server
+	supabase/            # Migrations and edge functions
+	docs/                # Internal workflow docs
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Prerequisites
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+- Node.js 18+ and npm
+- Go 1.22+
+- Supabase project credentials
+
+## Environment Setup
+
+### 1) Frontend env (`.env` in repo root)
+
+```dotenv
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+VITE_API_URL=http://localhost:8080
+```
+
+### 2) Backend env (`backend/.env`)
+
+Use [backend/.env.example](backend/.env.example) as the template.
+
+```dotenv
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+PORT=8080
+FRONTEND_URL=http://localhost:5173
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+### Security note
+
+- Never commit `.env` files.
+- If a key is accidentally committed, rotate it immediately.
+
+## Local Development
+
+### 1) Install frontend dependencies
+
+```bash
+npm install
+```
+
+### 2) Run backend
+
+```bash
+cd backend
+go mod download
+go run .
+```
+
+Backend default URL: `http://localhost:8080`
+
+### 3) Run frontend
+
+Open a new terminal in project root:
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Frontend default URL: `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 4) Verify health
 
-**Use GitHub Codespaces**
+```bash
+curl http://localhost:8080/health
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Expected:
 
-## What technologies are used for this project?
+```json
+{"status":"ok"}
+```
 
-This project is built with:
+## Frontend Scripts
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- `npm run dev` - Start Vite dev server
+- `npm run build` - Build production bundle
+- `npm run build:dev` - Build in development mode
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run test` - Run Vitest once
+- `npm run test:watch` - Run Vitest in watch mode
 
-## How can I deploy this project?
+## Backend API (Current Routes)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Public:
 
-## Can I connect a custom domain to my Lovable project?
+- `GET /health`
 
-Yes, you can!
+Authenticated (`Authorization: Bearer <supabase-jwt>`):
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- `GET /api/profile`
+- `PUT /api/profile`
+- `POST /api/onboarding/complete`
+- `GET /api/documents`
+- `POST /api/documents/upload`
+- `DELETE /api/documents/{id}`
+- `POST /api/documents/{id}/analyze`
+- `GET /api/financial-data`
+- `PUT /api/financial-data`
+- `GET /api/tax-analysis`
+- `POST /api/tax-analysis/run`
+- `POST /api/taxbuddy/strategy`
+- `GET /api/dashboard/stats`
+- `GET /api/schemes`
+- `POST /api/schemes/personalized`
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Database & Migrations
 
-AIzaSyB4kQmd1vMrFHaL6dCNjVhefYUGz2mXaTM
+Supabase migrations are in [supabase/migrations](supabase/migrations).
+
+Main consolidated schema:
+
+- [supabase/migrations/20260227184500_consolidated_schema.sql](supabase/migrations/20260227184500_consolidated_schema.sql)
+
+## Troubleshooting
+
+### Backend exits immediately
+
+- Ensure `backend/.env` exists and has valid values.
+- Check if port 8080 is occupied: `ss -ltnp | grep :8080`
+
+### Frontend loads but API calls fail
+
+- Confirm `VITE_API_URL` points to running backend.
+- Confirm user is authenticated in Supabase.
+- Confirm backend receives JWT in `Authorization` header.
+
+### CORS errors
+
+- Localhost origins are allowed by backend.
+- For non-local frontend URLs, set `FRONTEND_URL` in `backend/.env`.
+
+## Contributing
+
+1. Create a branch from `main`.
+2. Keep changes focused and small.
+3. Run lint/tests before pushing.
+4. Open a PR with clear context and screenshots (if UI changes).
+
+## Disclaimer
+
+TaxSathi provides AI-assisted guidance for educational and informational use. Always verify final filing decisions with a qualified tax professional.
