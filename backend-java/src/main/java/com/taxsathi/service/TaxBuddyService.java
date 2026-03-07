@@ -67,7 +67,7 @@ public class TaxBuddyService {
         String contextSummary = buildContextSummary(req);
 
         if (groqApiKey == null || groqApiKey.isBlank()) {
-            throw new IllegalStateException("GROQ_API_KEY is not configured");
+            throw new IllegalArgumentException("GROQ_API_KEY is not configured. Please add it to your .env file.");
         }
 
         String systemPrompt = """
@@ -190,7 +190,7 @@ public class TaxBuddyService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GROQ_CHAT_URL))
-                .header("Authorization", "Bearer " + groqApiKey)
+                .header("Authorization", "Bearer " + groqApiKey.trim())
                 .header("Content-Type", "application/json")
                 .timeout(Duration.ofSeconds(60))
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
@@ -204,11 +204,14 @@ public class TaxBuddyService {
             throw new RuntimeException("Groq API call failed: " + e.getMessage(), e);
         }
 
+        if (response.statusCode() == 401) {
+            throw new IllegalArgumentException("Invalid or expired GROQ_API_KEY. Please check your .env file.");
+        }
         if (response.statusCode() == 429) {
-            throw new RuntimeException("Groq quota exceeded for model " + groqModel + ": add credits/billing and retry");
+            throw new IllegalArgumentException("Groq quota exceeded for model " + groqModel + ". Please check your billing.");
         }
         if (response.statusCode() >= 400) {
-            throw new RuntimeException("Groq error " + response.statusCode() + " (" + groqModel + "): " + response.body());
+            throw new RuntimeException("Groq API Error (" + response.statusCode() + "): " + response.body());
         }
 
         try {
