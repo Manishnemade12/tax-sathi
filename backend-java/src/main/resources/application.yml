@@ -1,0 +1,31 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: taxsathi-backend
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+# Supabase configuration — loaded from environment / .env
+supabase:
+  url: ${SUPABASE_URL}
+  anon-key: ${SUPABASE_ANON_KEY}
+
+# Groq AI configuration
+groq:
+  api-key: ${GROQ_API_KEY:}
+  model: ${GROQ_MODEL:llama-3.3-70b-versatile}
+  base-url: https://api.groq.com/openai/v1
+
+# Frontend CORS origin
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  financial-year: "2025-26"
+
+logging:
+  level:
+    com.taxsathi: INFO
+    org.springframework.security: WARN
